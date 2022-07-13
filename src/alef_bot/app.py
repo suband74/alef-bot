@@ -11,7 +11,12 @@ from alef_bot.tables import Locality
 engine = create_engine(POSTGRES_DATABASE_URL)
 session_local = sessionmaker(engine)
 
-def start_operation():
+def start_operation() -> tuple[list, list, list]:
+    """Запрашивает и парсит страницу.
+
+    Returns:
+        tuple: Списки с : населенными пунктами, ссылками, численностью населения в них
+    """
 
     url = "https://ru.wikipedia.org/wiki/%D0%93%D0%BE%D1%80%D0%BE%D0%B4%D1%81%D0%BA%D0%B8%D0%B5_%D0%BD%D0%B0%D1%81%D0%B5%D0%BB%D1%91%D0%BD%D0%BD%D1%8B%D0%B5_%D0%BF%D1%83%D0%BD%D0%BA%D1%82%D1%8B_%D0%9C%D0%BE%D1%81%D0%BA%D0%BE%D0%B2%D1%81%D0%BA%D0%BE%D0%B9_%D0%BE%D0%B1%D0%BB%D0%B0%D1%81%D1%82%D0%B8"
 
@@ -47,18 +52,21 @@ def start_operation():
     sps_population_size = []
     
     for i in range(len(sps_name)):
-        # sps[i] = sps[i].split(' ')
         sps_locality.append(sps_name[i])
         sps_link.append(sps_ref[i])
         sps_population_size.append(population_size[i])
     
-    # print(sps_locality)
-    # print(sps_link)
-    # print(sps_population_size)
     return (sps_locality, sps_link, sps_population_size)
 
 
-def put_locality(xxx, yyy, zzz):
+def put_locality(xxx: list, yyy: list, zzz: list) -> None:
+    """Удаляет все данные из БД и вносит свежие
+
+    Args:
+        xxx (list): Населенные пункты
+        yyy (list): ссылки
+        zzz (list): численность населения
+    """
     with Session(engine)as session:
         session.begin()
         try:
@@ -77,13 +85,14 @@ def put_locality(xxx, yyy, zzz):
             raise
         session.commit()
 
-# def put_locality(xxx, yyy, zzz):
-#     with session_local.begin() as session:
-#         session.delete(Locality)
 
-def get_list_locality(mes):
+def get_list_locality(mes: str):
+    """Получает из БД записи, в названии которых есть строка из аргумента
+
+    Args:
+        mes (str): строка на русском
+
+    """
     with Session(engine) as session:
         query = session.execute(select(Locality.name, Locality.reference, Locality.population_size).where(Locality.name.like (f'%{mes}%'))).fetchall()
     return query
-
-start_operation()

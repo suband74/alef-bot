@@ -1,6 +1,5 @@
 from aiogram.dispatcher import Dispatcher
 from aiogram.types import Message
-from aiogram.dispatcher.filters import Text
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from alef_bot.create_bot import bot

@@ -15,7 +15,8 @@ psycopg2-binary = "^2.9.3"
 aiogram = "^2.21"
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.2"
+pytest = "^7.1.2"
+requests-mock = "^1.9.3"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
